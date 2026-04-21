@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>मजदूर पंजीकरण — Majdoor.com</title>
+  <meta name="description" content="Majdoor.com पर कुशल मजदूर के रूप में पंजीकरण करें। अपने आस-पास निर्माण, चिनाई, पेंटिंग और प्लंबिंग का काम पाएं। मुफ्त पंजीकरण।">
+  <link rel="stylesheet" href="style.css">
+  <style>html,body{overflow-x:hidden;max-width:100%;}</style>
+  <style>
+    .wa-float{position:fixed;bottom:24px;right:24px;z-index:999;background:#25D366;color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(37,211,102,.4);transition:transform .2s;text-decoration:none;}
+  </style>
+</head>
+<body>
+  <div id="toast"></div>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo">
+        <div class="navbar-logo-icon">⚒️</div>
+        <div class="navbar-logo-text">Majdoor<span>.com</span></div>
+      </a>
+      <div class="navbar-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="contractor.html" class="btn btn-primary btn-sm">I'm a Contractor</a>
+      </div>
+      <div class="nav-mobile-ctas">
+        <a href="index.html" class="btn btn-outline btn-sm">Home</a>
+        <a href="contractor.html" class="btn btn-primary btn-sm">Contractor</a>
+      </div>
+    </div>
+  </nav>
+  <style>
+    .nav-mobile-ctas{display:none;}
+    @media(max-width:768px){.nav-mobile-ctas{display:flex;align-items:center;gap:6px;}.navbar-nav{display:none!important;}}
+  </style>
+
+  <div class="auth-page">
+    <div style="width:100%;max-width:540px;">
+
+      <div id="reg-screen" class="auth-box">
+        <div class="auth-logo">Majdoor<span>.com</span></div>
+        <div class="auth-sub">Worker Registration — Free, Simple, Fast</div>
+
+        <div class="alert alert-success" style="margin-bottom:20px;">
+          🔒 Your contact number will <strong>NOT</strong> be shared with contractors. Our team will call you.
+        </div>
+
+        <form id="majdoor-form">
+          <div class="form-group">
+            <label>पूरा नाम *</label>
+            <input type="text" id="mj-name" class="form-control" placeholder="अपना पूरा नाम लिखें" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>मोबाइल नंबर *</label>
+              <input type="tel" id="mj-phone" class="form-control" placeholder="+91 98765 43210" required>
+            </div>
+            <div class="form-group">
+              <label>शहर *</label>
+              <input type="text" id="mj-city" class="form-control" placeholder="उदा. दिल्ली, मुंबई" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>आपका मुख्य काम (हुनर) *</label>
+              <select id="mj-skill" class="form-control" required>
+                <option value="">हुनर चुनें</option>
+                <option>मिस्त्री (Mason)</option>
+                <option>हेल्पर (Helper)</option>
+                <option>पेंटर (Painter)</option>
+                <option>प्लंबर (Plumber)</option>
+                <option>इलेक्ट्रीशियन (Electrician)</option>
+                <option>बढ़ई (Carpenter)</option>
+                <option>टाइल का काम (Tile Work)</option>
+                <option>सरिया बांधने वाला (Bar Bender)</option>
+                <option>वेल्डर (Welder)</option>
+                <option>अन्य (Other)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>अनुभव (Experience)</label>
+              <select id="mj-exp" class="form-control">
+                <option value="">चुनें</option>
+                <option>नया (0-1 साल)</option>
+                <option>1-3 साल</option>
+                <option>3-5 साल</option>
+                <option>5-10 साल</option>
+                <option>10 साल से ज्यादा</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>आप काम के लिए कब उपलब्ध हैं?</label>
+            <select id="mj-avail" class="form-control">
+              <option value="">उपलब्धता चुनें</option>
+              <option>अभी उपलब्ध (Immediately)</option>
+              <option>1 हफ्ते में</option>
+              <option>2 हफ्ते में</option>
+              <option>अभी व्यस्त हूँ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>अन्य हुनर (Optional)</label>
+            <input type="text" id="mj-extra" class="form-control" placeholder="जैसे: ड्राइविंग, वाटरप्रूफिंग, आदि।">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:8px;">
+            मेरी जानकारी भेजें
+          </button>
+          <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:14px;">जब आपके आस-पास काम मिलेगा, हमारी टीम आपसे संपर्क करेगी।</p>
+        </form>
+      </div>
+
+      <div id="success-screen" style="display:none;" class="auth-box">
+        <div class="success-card">
+          <div class="success-icon">✅</div>
+          <h2>जानकारी भेजी गई!</h2>
+          <p class="text-muted" style="margin:12px 0 28px;">धन्यवाद, <strong id="success-name"></strong>! जब आपके आस-पास काम मिलेगा, हमारी टीम आपको फोन करेगी।</p>
+          <div style="background:var(--off);border-radius:12px;padding:20px;text-align:left;margin-bottom:24px;">
+            <p style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">आपकी जानकारी (Summary)</p>
+            <div id="profile-summary"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="https://wa.me/917023779602?text=नमस्ते%2C+मैने+Majdoor.com+पर+मजदूर+के+रूप+में+रजिस्टर+किया+है।" target="_blank" class="btn btn-success btn-block">📱 व्हाट्सएप पर मैसेज भेजें</a>
+            <a href="index.html" class="btn btn-outline btn-block">वापस होम पर जाएं</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo">Majdoor<span>.com</span></div>
+    <p style="margin-bottom:8px;color:rgba(255,255,255,.5);font-size:14px;">भारत का मजदूर सप्लाई प्लेटफॉर्म</p>
+    <p style="font-size:13px;">© 2025 Majdoor.com. सर्वाधिकार सुरक्षित</p>
+  </footer>
+
+  <a href="https://wa.me/917023779602" class="wa-float" target="_blank">💬</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script>
+    // Track Page Visit
+    DB.trackVisit('Worker Registration');
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    document.getElementById('majdoor-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const btn = this.querySelector('button[type="submit"]');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = 'जानकारी भेज रहे हैं...';
+
+      const data = {
+        id: Date.now().toString(),
+        type: 'majdoor',
+        name: document.getElementById('mj-name').value.trim(),
+        phone: document.getElementById('mj-phone').value.trim(),
+        city: document.getElementById('mj-city').value.trim(),
+        skill: document.getElementById('mj-skill').value,
+        experience: document.getElementById('mj-exp').value,
+        availability: document.getElementById('mj-avail').value,
+        extraSkills: document.getElementById('mj-extra').value.trim(),
+        status: 'New',
+        notes: '',
+        registeredAt: new Date().toLocaleString('en-IN')
+      };
+
+      if (!data.name || !data.phone || !data.city || !data.skill) {
+        showToast('कृपया सभी जरूरी जानकारी भरें।');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        return;
+      }
+
+      try {
+        await DB.save('majdoors', data);
+        
+        document.getElementById('reg-screen').style.display = 'none';
+        document.getElementById('success-screen').style.display = 'block';
+        document.getElementById('success-name').textContent = data.name;
+        document.getElementById('profile-summary').innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:8px;"><span style="color:var(--muted);font-size:14px;">नाम</span><span style="font-weight:700;font-size:14px;">${data.name}</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:8px;"><span style="color:var(--muted);font-size:14px;">शहर</span><span style="font-weight:700;font-size:14px;">${data.city}</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:8px;"><span style="color:var(--muted);font-size:14px;">हुनर</span><span style="font-weight:700;font-size:14px;">${data.skill}</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-size:14px;">अनुभव</span><span style="font-weight:700;font-size:14px;">${data.experience || '—'}</span></div>
+          </div>
+        `;
+      } catch (err) {
+        showToast('कुछ गलत हुआ। कृपया फिर से कोशिश करें।');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contractor Registration — Hire Skilled Workers | Majdoor.com</title>
+  <meta name="description" content="Register as a contractor on Majdoor.com. We'll match you with verified skilled workers near your project site quickly.">
+  <link rel="stylesheet" href="style.css">
+  <style>html,body{overflow-x:hidden;max-width:100%;}</style>
+  <style>
+    .wa-float{position:fixed;bottom:24px;right:24px;z-index:999;background:#25D366;color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(37,211,102,.4);transition:transform .2s;text-decoration:none;}
+  </style>
+</head>
+<body>
+  <div id="toast"></div>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo">
+        <div class="navbar-logo-icon">⚒️</div>
+        <div class="navbar-logo-text">Majdoor<span>.com</span></div>
+      </a>
+      <div class="navbar-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="majdoor.html" class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,.3);color:#fff;">I'm a Worker</a>
+      </div>
+      <div class="nav-mobile-ctas">
+        <a href="index.html" class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,.3);color:#fff;">Home</a>
+        <a href="majdoor.html" class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,.3);color:#fff;">Worker</a>
+      </div>
+    </div>
+  </nav>
+  <style>
+    .nav-mobile-ctas{display:none;}
+    @media(max-width:768px){.nav-mobile-ctas{display:flex;align-items:center;gap:6px;}.navbar-nav{display:none!important;}}
+  </style>
+
+  <div class="auth-page">
+    <div style="width:100%;max-width:580px;">
+
+      <div id="reg-screen" class="auth-box">
+        <div class="auth-logo">Majdoor<span>.com</span></div>
+        <div class="auth-sub">Contractor Registration — Tell us what you need</div>
+
+        <div class="alert alert-success" style="margin-bottom:20px;">
+          🔒 Worker contact details are never shared. Our team will match &amp; call you within 30 minutes.
+        </div>
+
+        <form id="contractor-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Your Name *</label>
+              <input type="text" id="co-name" class="form-control" placeholder="Eg. Suresh Gupta" required>
+            </div>
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <input type="tel" id="co-phone" class="form-control" placeholder="+91 98765 43210" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Company / Firm Name (Optional)</label>
+            <input type="text" id="co-company" class="form-control" placeholder="Eg. Gupta Constructions">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Project Location / City *</label>
+              <input type="text" id="co-location" class="form-control" placeholder="Eg. Andheri, Mumbai" required>
+            </div>
+            <div class="form-group">
+              <label>Type of Work Required *</label>
+              <select id="co-work" class="form-control" required>
+                <option value="">Select Type</option>
+                <option>Masonry / Civil Work</option>
+                <option>Painting</option>
+                <option>Plumbing</option>
+                <option>Electrical</option>
+                <option>Carpentry</option>
+                <option>Tiling / Flooring</option>
+                <option>Bar Bending / Steel</option>
+                <option>General Labour / Helper</option>
+                <option>Demolition</option>
+                <option>Multiple / Mixed</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Number of Workers Needed *</label>
+              <select id="co-count" class="form-control" required>
+                <option value="">Select</option>
+                <option>1-2 Workers</option>
+                <option>3-5 Workers</option>
+                <option>6-10 Workers</option>
+                <option>11-20 Workers</option>
+                <option>20+ Workers</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Project Duration *</label>
+              <select id="co-duration" class="form-control" required>
+                <option value="">Select</option>
+                <option>1-3 Days</option>
+                <option>1 Week</option>
+                <option>2-4 Weeks</option>
+                <option>1-3 Months</option>
+                <option>3+ Months (Long-term)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>When do you need workers?</label>
+            <select id="co-start" class="form-control">
+              <option value="">Select</option>
+              <option>Immediately (Today/Tomorrow)</option>
+              <option>This Week</option>
+              <option>Next Week</option>
+              <option>This Month</option>
+              <option>Planning Ahead</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Additional Requirements (Optional)</label>
+            <textarea id="co-notes" class="form-control" rows="3" placeholder="Any special skills needed, tools to be brought, shift timings, etc." style="resize:vertical;"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:8px;">
+            Submit Requirement
+          </button>
+          <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:14px;">Our team will call you within 30 minutes during business hours (9am-7pm).</p>
+        </form>
+      </div>
+
+      <div id="success-screen" style="display:none;" class="auth-box">
+        <div class="success-card">
+          <div class="success-icon">🏗️</div>
+          <h2>Request Submitted!</h2>
+          <p class="text-muted" style="margin:12px 0 28px;">Thank you, <strong id="success-name"></strong>! We've received your requirement. Our team will call you with matched worker profiles within 30 minutes.</p>
+          <div style="background:var(--off);border-radius:12px;padding:20px;text-align:left;margin-bottom:24px;">
+            <p style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">Your Requirement Summary</p>
+            <div id="req-summary"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="https://wa.me/917023779602?text=Hi%2C+I+just+posted+a+worker+requirement+on+Majdoor.com." target="_blank" class="btn btn-success btn-block">📱 Follow Up on WhatsApp</a>
+            <a href="index.html" class="btn btn-outline btn-block">Back to Home</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo">Majdoor<span>.com</span></div>
+    <p style="margin-bottom:8px;color:rgba(255,255,255,.5);font-size:14px;">India's Worker Supply Platform</p>
+    <p style="font-size:13px;">© 2025 Majdoor.com. All Rights Reserved</p>
+  </footer>
+
+  <a href="https://wa.me/917023779602" class="wa-float" target="_blank">💬</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script>
+    // Track Page Visit
+    DB.trackVisit('Contractor Registration');
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    document.getElementById('contractor-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const btn = this.querySelector('button[type="submit"]');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = 'Submitting...';
+
+      const data = {
+        id: Date.now().toString(),
+        type: 'contractor',
+        name: document.getElementById('co-name').value.trim(),
+        phone: document.getElementById('co-phone').value.trim(),
+        company: document.getElementById('co-company').value.trim(),
+        location: document.getElementById('co-location').value.trim(),
+        workType: document.getElementById('co-work').value,
+        workerCount: document.getElementById('co-count').value,
+        duration: document.getElementById('co-duration').value,
+        startDate: document.getElementById('co-start').value,
+        notes: document.getElementById('co-notes').value.trim(),
+        status: 'New',
+        adminNotes: '',
+        registeredAt: new Date().toLocaleString('en-IN')
+      };
+
+      if (!data.name || !data.phone || !data.location || !data.workType || !data.workerCount || !data.duration) {
+        showToast('Please fill all required fields.');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        return;
+      }
+
+      try {
+        await DB.save('contractors', data);
+        
+        document.getElementById('reg-screen').style.display = 'none';
+        document.getElementById('success-screen').style.display = 'block';
+        document.getElementById('success-name').textContent = data.name;
+        document.getElementById('req-summary').innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:8px;"><span style="color:var(--muted);font-size:14px;">Location</span><span style="font-weight:700;font-size:14px;">${data.location}</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:8px;"><span style="color:var(--muted);font-size:14px;">Work Type</span><span style="font-weight:700;font-size:14px;">${data.workType}</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:8px;"><span style="color:var(--muted);font-size:14px;">Workers Needed</span><span style="font-weight:700;font-size:14px;">${data.workerCount}</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-size:14px;">Duration</span><span style="font-weight:700;font-size:14px;">${data.duration}</span></div>
+          </div>
+        `;
+      } catch (err) {
+        showToast('Something went wrong. Please try again.');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    });
+  </script>
+</body>
+</html>

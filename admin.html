@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Majdoor.com</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-login { min-height: 100vh; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, var(--navy) 0%, #0d2d5a 100%); padding: 20px; }
+    .tab-bar { display:flex; background:var(--off); border-radius:12px; padding:4px; margin-bottom:24px; gap:4px; }
+    .tab-btn { flex:1; padding:10px 8px; border:none; background:none; font-family:inherit; font-size:14px; font-weight:700; color:var(--muted); border-radius:10px; cursor:pointer; transition:all .2s; }
+    .tab-btn.active { background:var(--navy); color:var(--white); }
+    .panel { display:none; }
+    .panel.active { display:block; }
+    .actions-cell { display:flex; gap:6px; flex-wrap:wrap; }
+    .status-new      { background:#fef3c7; color:#92400e; }
+    .status-contacted{ background:#dbeafe; color:#1e40af; }
+    .status-matched  { background:#d1fae5; color:#065f46; }
+    .status-closed   { background:#f1f5f9; color:#475569; }
+    .note-input { border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-family: inherit; font-size: 13px; width: 150px; outline: none; }
+    .note-input:focus { border-color: var(--accent); }
+    .export-btn { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13px; display:flex; align-items:center; gap:6px; }
+    .export-btn:hover { opacity: .9; }
+  </style>
+</head>
+<body>
+
+  <div id="toast"></div>
+
+  <!-- LOGIN GATE -->
+  <div id="admin-login" class="admin-login">
+    <div class="auth-box" style="max-width:380px;">
+      <div class="auth-logo">Majdoor<span>.com</span></div>
+      <div class="auth-sub">Admin Access Only — Majdoor.com</div>
+      <form id="login-form">
+        <div class="form-group">
+          <label>Admin Password</label>
+          <input type="password" id="admin-pass" class="form-control" placeholder="Enter admin password" required>
+        </div>
+        <button type="submit" id="login-btn" class="btn btn-primary btn-block">Login to Admin Panel →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL (hidden until login) -->
+  <div id="admin-panel" style="display:none;">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <a href="index.html" class="navbar-logo"><div class="navbar-logo-icon">⚒️</div>Majdoor<span>.com</span></a>
+        <div style="color:rgba(255,255,255,.5);font-size:14px;font-weight:600;">Admin Panel — Majdoor.com</div>
+        <button onclick="adminLogout()" class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,.2);color:#fff;">Logout</button>
+      </div>
+    </nav>
+
+    <!-- Dash Header -->
+    <div class="dash-header">
+      <div class="container">
+        <div>
+          <h1 class="dash-title">Admin Dashboard</h1>
+          <p class="dash-subtitle" id="last-updated"></p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="export-btn" onclick="exportCSV('majdoors')">⬇ Export Workers</button>
+          <button class="export-btn" onclick="exportCSV('contractors')">⬇ Export Contractors</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dash Body -->
+    <div class="dash-body">
+      <div class="container">
+        <!-- KPI Cards -->
+        <div class="dash-grid" style="margin-bottom:32px;">
+          <div class="stat-card">
+            <div class="val" id="kpi-workers">0</div>
+            <div class="lbl">Total Workers</div>
+          </div>
+          <div class="stat-card" style="border-left-color:#3b82f6;">
+            <div class="val" id="kpi-contractors">0</div>
+            <div class="lbl">Total Contractors</div>
+          </div>
+          <div class="stat-card" style="border-left-color:var(--success);">
+            <div class="val" id="kpi-matched">0</div>
+            <div class="lbl">Matches Made</div>
+          </div>
+          <div class="stat-card" style="border-left-color:var(--blue);">
+            <div class="val" id="kpi-visits">0</div>
+            <div class="lbl">Website Visits</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('workers')">🔨 Workers</button>
+          <button class="tab-btn" onclick="switchTab('contractors')">🏗️ Contractors</button>
+          <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
+        </div>
+
+        <!-- Workers Panel -->
+        <div id="panel-workers" class="panel active">
+          <div class="table-wrap">
+            <div class="table-head">
+              <h3>All Registered Workers</h3>
+              <div class="table-filters">
+                <input type="text" id="filter-mj-search" placeholder="Search name or city…" oninput="renderMajdoors()">
+                <select id="filter-mj-skill" onchange="renderMajdoors()">
+                  <option value="">All Skills</option>
+                  <option>Mason (Mistri)</option>
+                  <option>Helper (Beldar)</option>
+                  <option>Painter</option>
+                  <option>Plumber</option>
+                  <option>Electrician</option>
+                  <option>Carpenter</option>
+                  <option>Tile Work</option>
+                </select>
+                <select id="filter-mj-status" onchange="renderMajdoors()">
+                  <option value="">All Statuses</option>
+                  <option>New</option>
+                  <option>Contacted</option>
+                  <option>Matched</option>
+                  <option>Closed</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>City</th>
+                    <th>Skill</th>
+                    <th>Experience</th>
+                    <th>Availability</th>
+                    <th>Status</th>
+                    <th>Registered</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="majdoor-tbody"></tbody>
+              </table>
+              <div id="no-majdoors" class="no-data" style="display:none;">
+                <div class="icon">🔍</div>
+                <p>No workers found matching your filters.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contractors Panel -->
+        <div id="panel-contractors" class="panel">
+          <div class="table-wrap">
+            <div class="table-head">
+              <h3>All Contractor Requests</h3>
+              <div class="table-filters">
+                <input type="text" id="filter-co-search" placeholder="Search name or city…" oninput="renderContractors()">
+                <select id="filter-co-work" onchange="renderContractors()">
+                  <option value="">All Work Types</option>
+                  <option>Masonry / Civil Work</option>
+                  <option>Painting</option>
+                  <option>Plumbing</option>
+                  <option>Electrical</option>
+                  <option>Carpentry</option>
+                  <option>Tiling / Flooring</option>
+                  <option>General Labour / Helper</option>
+                </select>
+                <select id="filter-co-status" onchange="renderContractors()">
+                  <option value="">All Statuses</option>
+                  <option>New</option>
+                  <option>Contacted</option>
+                  <option>Matched</option>
+                  <option>Closed</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Company</th>
+                    <th>Location</th>
+                    <th>Work Type</th>
+                    <th>Workers</th>
+                    <th>Duration</th>
+                    <th>Start</th>
+                    <th>Status</th>
+                    <th>Registered</th>
+                    <th>Admin Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="contractor-tbody"></tbody>
+              </table>
+              <div id="no-contractors" class="no-data" style="display:none;">
+                <div class="icon">🔍</div>
+                <p>No contractors found matching your filters.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Settings Panel -->
+        <div id="panel-settings" class="panel">
+          <div class="auth-box" style="box-shadow:none;border:1px solid var(--border);margin:0 auto;max-width:440px;">
+            <h3 style="margin-bottom:20px;">Portal Settings</h3>
+            <form id="password-change-form">
+              <div class="form-group">
+                <label>New Admin Password</label>
+                <input type="password" id="new-password" class="form-control" placeholder="Enter new password" required>
+              </div>
+              <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirm-password" class="form-control" placeholder="Confirm new password" required>
+              </div>
+              <button type="submit" id="pwd-btn" class="btn btn-primary btn-block">Update Admin Password</button>
+            </form>
+            <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+              <p style="font-size:13px;color:var(--muted);">Changing the password will affect all future logins. Please remember it securely.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script>
+    let currentMajdoors = [];
+    let currentContractors = [];
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ----- Auth -----
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const loginBtn = document.getElementById('login-btn');
+      const originalText = loginBtn.textContent;
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Verifying...';
+
+      const enteredPw = document.getElementById('admin-pass').value;
+      
+      try {
+        const correctPw = await DB.getAdminPassword();
+        if(enteredPw === correctPw) {
+          document.getElementById('admin-login').style.display = 'none';
+          document.getElementById('admin-panel').style.display = 'block';
+          await fetchAndRenderAll();
+        } else {
+          showToast('Incorrect password.');
+        }
+      } catch (err) {
+        showToast('Error connecting to database.');
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = originalText;
+      }
+    });
+
+    function adminLogout() {
+      document.getElementById('admin-login').style.display = 'flex';
+      document.getElementById('admin-panel').style.display = 'none';
+    }
+
+    // ----- Tabs -----
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach((b,i) => {
+        const isMatch = (tab==='workers'&&i===0) || (tab==='contractors'&&i===1) || (tab==='settings'&&i===2);
+        b.classList.toggle('active', isMatch);
+      });
+      document.getElementById('panel-workers').classList.toggle('active', tab==='workers');
+      document.getElementById('panel-contractors').classList.toggle('active', tab==='contractors');
+      document.getElementById('panel-settings').classList.toggle('active', tab==='settings');
+    }
+
+    // Password Change Handler
+    document.getElementById('password-change-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const newPwd = document.getElementById('new-password').value;
+      const confirmPwd = document.getElementById('confirm-password').value;
+      const btn = document.getElementById('pwd-btn');
+
+      if(newPwd !== confirmPwd) {
+        showToast('Passwords do not match!');
+        return;
+      }
+
+      if(newPwd.length < 6) {
+        showToast('Password should be at least 6 characters.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Updating...';
+
+      try {
+        await DB.updateAdminPassword(newPwd);
+        showToast('Password updated successfully!');
+        this.reset();
+      } catch (err) {
+        showToast('Failed to update password.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Update Admin Password';
+      }
+    });
+
+    // ----- Data Fetching -----
+    async function fetchAndRenderAll() {
+      showToast('Fetching latest data...');
+      try {
+        currentMajdoors = await DB.getAll('majdoors');
+        currentContractors = await DB.getAll('contractors');
+        const visits = await DB.getAnalytics();
+        document.getElementById('kpi-visits').textContent = visits;
+        renderAll();
+      } catch (err) {
+        showToast('Error loading data.');
+      }
+    }
+
+    function renderAll() {
+      renderMajdoors();
+      renderContractors();
+      updateKPIs();
+      document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleString('en-IN');
+    }
+
+    function updateKPIs() {
+      const matched = currentMajdoors.filter(m => m.status === 'Matched').length + currentContractors.filter(c => c.status === 'Matched').length;
+      document.getElementById('kpi-workers').textContent = currentMajdoors.length;
+      document.getElementById('kpi-contractors').textContent = currentContractors.length;
+      document.getElementById('kpi-matched').textContent = Math.floor(matched / 2);
+    }
+
+    function badgeClass(status) {
+      return {
+        'New': 'status-new',
+        'Contacted': 'status-contacted',
+        'Matched': 'status-matched',
+        'Closed': 'status-closed'
+      }[status] || 'status-new';
+    }
+
+    function renderMajdoors() {
+      const search = (document.getElementById('filter-mj-search').value || '').toLowerCase();
+      const skill  = document.getElementById('filter-mj-skill').value;
+      const status = document.getElementById('filter-mj-status').value;
+
+      let rows = currentMajdoors.filter(m => {
+        const matchSearch = !search || m.name.toLowerCase().includes(search) || m.city.toLowerCase().includes(search) || m.phone.includes(search);
+        const matchSkill  = !skill  || m.skill === skill;
+        const matchStatus = !status || m.status === status;
+        return matchSearch && matchSkill && matchStatus;
+      });
+
+      const tbody = document.getElementById('majdoor-tbody');
+      const noData = document.getElementById('no-majdoors');
+
+      if(rows.length === 0) {
+        tbody.innerHTML = '';
+        noData.style.display = 'block';
+        return;
+      }
+      noData.style.display = 'none';
+
+      tbody.innerHTML = rows.map((m, i) => {
+        const isNew = m.status === 'New';
+        const lastCall = m.lastCalledAt ? new Date(m.lastCalledAt).toLocaleDateString('en-IN') : 'Never';
+        
+        return `
+        <tr id="row-mj-${m.id}" style="${isNew ? 'background:rgba(251,191,36,0.05);' : ''}">
+          <td style="font-weight:700;color:var(--muted)">${i+1}</td>
+          <td style="font-weight:700;white-space:nowrap;">
+            ${m.name}
+            ${isNew ? '<span style="font-size:10px;background:#ef4444;color:#fff;padding:2px 4px;border-radius:4px;margin-left:4px;">NEW</span>' : ''}
+          </td>
+          <td>
+            <a href="tel:${m.phone}" style="color:var(--blue);font-weight:600;">${m.phone}</a>
+            <a href="https://wa.me/91${m.phone.replace(/\D/g,'')}" target="_blank" style="margin-left:6px;font-size:16px;" title="WhatsApp">💬</a>
+          </td>
+          <td>${m.city}</td>
+          <td><span class="badge badge-yellow">${m.skill}</span></td>
+          <td>${m.experience || '—'}</td>
+          <td>${m.availability || '—'}</td>
+          <td>
+            <select class="form-control" style="padding:6px 10px;font-size:13px;min-width:110px;" onchange="updateStatus('majdoors','${m.id}',this.value)">
+              ${['New','Contacted','Matched','Closed'].map(s=>`<option ${m.status===s?'selected':''} value="${s}">${s}</option>`).join('')}
+            </select>
+            <div style="font-size:10px;color:var(--muted);margin-top:4px;">Called: ${lastCall}</div>
+          </td>
+          <td style="font-size:12px;color:var(--muted);white-space:nowrap;">${m.registeredAt}</td>
+          <td>
+            <input class="note-input" value="${m.notes||''}" placeholder="Add note…" onblur="saveNote('majdoors','${m.id}',this.value)">
+          </td>
+          <td>
+            <div class="actions-cell">
+              ${isNew ? `<button class="btn btn-sm" style="background:var(--success);color:#fff;" onclick="markCalled('majdoors','${m.id}')">📞 Call Done</button>` : ''}
+              <button class="btn btn-sm" style="background:#fef3c7;color:#92400e;" onclick="deleteEntry('majdoors','${m.id}')">🗑</button>
+            </div>
+          </td>
+        </tr>
+      `;}).join('');
+    }
+
+    function renderContractors() {
+      const search = (document.getElementById('filter-co-search').value || '').toLowerCase();
+      const work   = document.getElementById('filter-co-work').value;
+      const status = document.getElementById('filter-co-status').value;
+
+      let rows = currentContractors.filter(c => {
+        const matchSearch = !search || c.name.toLowerCase().includes(search) || c.location.toLowerCase().includes(search) || c.phone.includes(search);
+        const matchWork   = !work   || c.workType === work;
+        const matchStatus = !status || c.status === status;
+        return matchSearch && matchWork && matchStatus;
+      });
+
+      const tbody = document.getElementById('contractor-tbody');
+      const noData = document.getElementById('no-contractors');
+
+      if(rows.length === 0) {
+        tbody.innerHTML = '';
+        noData.style.display = 'block';
+        return;
+      }
+      noData.style.display = 'none';
+
+      tbody.innerHTML = rows.map((c, i) => `
+        <tr>
+          <td style="font-weight:700;color:var(--muted)">${i+1}</td>
+          <td style="font-weight:700;white-space:nowrap;">${c.name}</td>
+          <td>
+            <a href="tel:${c.phone}" style="color:var(--blue);font-weight:600;">${c.phone}</a>
+            <a href="https://wa.me/91${c.phone.replace(/\D/g,'')}" target="_blank" style="margin-left:6px;font-size:16px;" title="WhatsApp">💬</a>
+          </td>
+          <td>${c.company || '—'}</td>
+          <td>${c.location}</td>
+          <td><span class="badge badge-blue">${c.workType}</span></td>
+          <td>${c.workerCount}</td>
+          <td>${c.duration}</td>
+          <td style="font-size:13px;">${c.startDate || '—'}</td>
+          <td>
+            <select class="form-control" style="padding:6px 10px;font-size:13px;min-width:110px;" onchange="updateStatus('contractors','${c.id}',this.value)">
+              ${['New','Contacted','Matched','Closed'].map(s=>`<option ${c.status===s?'selected':''} value="${s}">${s}</option>`).join('')}
+            </select>
+          </td>
+          <td style="font-size:12px;color:var(--muted);white-space:nowrap;">${c.registeredAt}</td>
+          <td>
+            <input class="note-input" value="${c.adminNotes||''}" placeholder="Add note…" onblur="saveNote('contractors','${c.id}',this.value,'adminNotes')">
+          </td>
+          <td>
+            <div class="actions-cell">
+              <button class="btn btn-sm" style="background:#fef3c7;color:#92400e;" onclick="deleteEntry('contractors','${c.id}')">🗑</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ----- Actions -----
+    async function updateStatus(table, id, status) {
+      try {
+        await DB.update(table, id, { status });
+        // Update local state
+        const list = table === 'majdoors' ? currentMajdoors : currentContractors;
+        const item = list.find(x => x.id === id);
+        if(item) item.status = status;
+        updateKPIs();
+        showToast('Status updated to: ' + status);
+      } catch (err) {
+        showToast('Update failed.');
+      }
+    }
+
+    async function markCalled(table, id) {
+      try {
+        const now = new Date().toISOString();
+        await DB.update(table, id, { status: 'Contacted', lastCalledAt: now });
+        // Update local state
+        const list = table === 'majdoors' ? currentMajdoors : currentContractors;
+        const item = list.find(x => x.id === id);
+        if(item) {
+          item.status = 'Contacted';
+          item.lastCalledAt = now;
+        }
+        renderAll();
+        showToast('Marked as Contacted');
+      } catch (err) {
+        showToast('Error updating status.');
+      }
+    }
+
+    async function saveNote(table, id, value, field='notes') {
+      try {
+        await DB.update(table, id, { [field]: value });
+        // Update local state
+        const list = table === 'majdoors' ? currentMajdoors : currentContractors;
+        const item = list.find(x => x.id === id);
+        if(item) item[field] = value;
+        showToast('Note saved.');
+      } catch (err) {
+        showToast('Failed to save note.');
+      }
+    }
+
+    async function deleteEntry(table, id) {
+      if(!confirm('Delete this entry?')) return;
+      try {
+        await DB.delete(table, id);
+        if(table === 'majdoors') {
+          currentMajdoors = currentMajdoors.filter(x => x.id !== id);
+        } else {
+          currentContractors = currentContractors.filter(x => x.id !== id);
+        }
+        renderAll();
+        showToast('Entry deleted.');
+      } catch (err) {
+        showToast('Delete failed.');
+      }
+    }
+
+    // ----- CSV Export -----
+    function exportCSV(table) {
+      const rows = table === 'majdoors' ? currentMajdoors : currentContractors;
+      if(rows.length === 0) { showToast('No data to export.'); return; }
+      const headers = Object.keys(rows[0]);
+      const csv = [
+        headers.join(','),
+        ...rows.map(r => headers.map(h => `"${(r[h]||'').toString().replace(/"/g,'""')}"`).join(','))
+      ].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url;
+      a.download = `majdoor_${table}_${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Export started!');
+    }
+  </script>
+</body>
+</html>
